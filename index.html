@@ -38,6 +38,8 @@
           <br>
           <br>
           <div class="content">
+            <span class="tag is-success" id="json-valid">valid</span>
+            <span class="tag is-danger" id="json-invalid" style="display: none">invalid</span>
             <textarea class="textarea" columns="200" rows="30" editable onkeyup="onDataChanged(event)" id="dataset-raw"></textarea>
           </div>
         </div>
@@ -76,6 +78,8 @@
       const datasetEl = document.getElementById('dataset-raw')
       const chartEl = document.getElementById('dataset-chart')
       const selectedFileEl = document.getElementById('selected-file')
+      const xEl = document.getElementById('json-valid')
+      const yEl = document.getElementById('json-invalid')
       document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
       google.charts.load('current', {packages: ['corechart', 'line', 'annotationchart']})
@@ -85,8 +89,12 @@
         try {
           json = JSON.parse(datasetEl.value)
           drawData(json)
+          if (xEl && xEl.style) xEl.style.display = 'inline-block'
+          if (yEl && yEl.style) yEl.style.display = 'none'
         } catch (err) {
           console.error(err)
+          if (xEl && xEl.style) xEl.style.display = 'none'
+          if (yEl && yEl.style) yEl.style.display = 'inline-block'
         }
       }
 
