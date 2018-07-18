@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>justchart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css" />
+    <style>
+      td {
+        padding-right: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="chart"></div>
+      <div id="dataset">
+        <table class="table has-text-centered">
+          <tr>
+            <th>time</th>
+            <th>value</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      const tableEl = document.querySelector('table')
+
+      google.charts.load('current', {packages: ['corechart', 'line', 'annotationchart']})
+      google.charts.setOnLoadCallback(draw => {
+        const samples = []
+
+        const HOURS = 1000 * 60 * 60
+        const INTERVAL = 48
+        let now = Date.now()
+        for (let i = 0; i < 30; i++) {
+          const time = new Date(now)
+          const value = Math.random() * 10 + 5
+          samples.push({time, value})
+          now += Math.random() * HOURS * INTERVAL + HOURS * INTERVAL / 1.2
+        }
+
+        drawOnChart({samples})
+        drawOnTable({samples, tableEl})
+      })
+
+      function drawOnTable ({samples, table}) {
+        samples.forEach(sample => {
+          const trEl = document.createElement('tr')
+          trEl.innerHTML = `
+            <td>
+            ${new Date(sample.time).toISOString()}
+            </td>
+            <td>
+            ${sample.value}
+            </td>
+          `
+          tableEl.appendChild(trEl)
+        })
+      }
+      function drawOnChart ({samples}) {
+        const options = {
+          title: 'value',
+          interpolateNulls: true,
+          hAxis: {
+            title: 'Time'
+          },
+          vAxis: {
+            title: 'value',
+            direction: 'r'
+          },
+          height: 300,
+          width: 1200,
+          legend: {position: 'none'}
+        }
+
+        const data = [['time', 'value']].concat(samples.map(i => [i.time, i.value]))
+
+        let data1 = google.visualization.arrayToDataTable(data, false)
+        var chart = new google.visualization.LineChart(document.getElementById('chart'))
+        chart.draw(data1, options)
+      }
+    </script>
+  </body>
+</html>
