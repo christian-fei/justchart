@@ -15,7 +15,7 @@
   <body>
     <div class="container section">
       <h1 class="title is-1">Just chart!</h1>
-      <p>Below you can see an example computed with a random sample of data, with time (x) and value (y).</p>
+      <p id="selected-file">Below you can see an example computed with a random sample of data, with time (x) and value (y).</p>
 
       <div class="container">
         <!-- <p>Or drop your JSON here!</p> -->
@@ -29,17 +29,26 @@
         <h2 class="title is-4">Chart</h2>
         <div id="dataset-chart"></div>
       </div>
+      <br>
+      <br>
       <div class="columns">
         <div class="column">
+          <h2 class="title is-4">Raw</h2>
+          <i>Psst! You can edit the raw JSON</i>
+          <br>
+          <br>
+          <div class="content">
+            <textarea class="textarea" columns="200" rows="30" editable onkeyup="onDataChanged(event)" id="dataset-raw"></textarea>
+          </div>
+        </div>
+        <div class="column">
           <h2 class="title is-4">Formatted</h2>
+          <br>
+          <br>
           <div id="dataset" class="card">
             <table id="dataset-table" class="table has-text-centered">
             </table>
           </div>
-        </div>
-        <div class="column">
-          <h2 class="title is-4">Raw</h2>
-          <pre id="dataset-raw"></pre>
         </div>
       </div>
     </div>
@@ -47,12 +56,22 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       const tableEl = document.getElementById('dataset-table')
-      const preEl = document.getElementById('dataset-raw')
+      const datasetEl = document.getElementById('dataset-raw')
       const chartEl = document.getElementById('dataset-chart')
+      const selectedFileEl = document.getElementById('selected-file')
       document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
       google.charts.load('current', {packages: ['corechart', 'line', 'annotationchart']})
       google.charts.setOnLoadCallback(draw => drawData(getSamples()))
+
+      function onDataChanged (event) {
+        try {
+          json = JSON.parse(datasetEl.value)
+          drawData(json)
+        } catch (err) {
+          console.error(err)
+        }
+      }
 
       function getSamples () {
         const data = []
@@ -64,7 +83,7 @@
         for (let i = 0; i < 30; i++) {
           const time = new Date(now)
           const value = Math.random() * 10 + 5
-          data.push({time, value})
+          data.push([time, value])
           now += Math.random() * HOURS * INTERVAL + HOURS * INTERVAL / 1.2
         }
 
@@ -72,21 +91,15 @@
       }
 
       function drawData (data) {
-        if (!Array.isArray(data)) {
-          alert('<data> must be an array')
-          return
-        }
-        if (data && Array.isArray(data[0])) {
-          data = data.map(j => ({time: j[0], value: j[1]}))
-        }
+        if (!Array.isArray(data)) return alert('<data> must be an array')
 
         drawOnChart(chartEl, data)
         drawOnTable(tableEl, data)
-        drawOnData(preEl, data)
+        drawOnData(datasetEl, data)
       }
 
-      function drawOnData (preEl, data) {
-        preEl.innerText = JSON.stringify(data, null, 2)
+      function drawOnData (datasetEl, data) {
+        datasetEl.innerText = JSON.stringify(data, null, 2)
       }
       function drawOnTable (tableEl, data) {
         tableEl.innerHTML = `<tr>
@@ -94,13 +107,15 @@
             <th>value</th>
           </tr>`
         data.forEach(sample => {
+          if (!sample[0]) return
+          console.log('sample[0]', sample[0])
           const trEl = document.createElement('tr')
           trEl.innerHTML = `
             <td>
-            ${new Date(sample.time).toISOString()}
+            ${new Date(sample[0]).toISOString()}
             </td>
             <td>
-            ${sample.value}
+            ${sample[1]}
             </td>
           `
           tableEl.appendChild(trEl)
@@ -115,7 +130,7 @@
             title: 'Time'
           },
           vAxis: {
-            title: 'value',
+            title: 'Value',
             direction: 'r'
           },
           height: 300,
@@ -123,11 +138,9 @@
           legend: {position: 'none'}
         }
 
-        data = [['time', 'value']].concat(data.map(i => [i.time, i.value]))
-
-        let data1 = google.visualization.arrayToDataTable(data, false)
         var chart = new google.visualization.LineChart(chartEl)
-        chart.draw(data1, options)
+        let chartData = google.visualization.arrayToDataTable([['time', 'value']].concat(data.map(i => [new Date(i[0]), i[1]])), false)
+        chart.draw(chartData, options)
       }
 
       function handleFileSelect(evt) {
@@ -144,6 +157,7 @@
       function handleFileRead(e) {
         let json = JSON.parse(e.target.result)
         drawData(json)
+        if (selectedFileEl && selectedFileEl.style) selectedFileEl.style.display = 'none'
       }
     </script>
   </body>
