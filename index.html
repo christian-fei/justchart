@@ -10,6 +10,26 @@
       td {
         padding-right: 1em;
       }
+
+      body {
+        animation: fadeIn 0.6s ease-in;
+      }
+      @-webkit-keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
     </style>
   </head>
   <body>
@@ -126,6 +146,7 @@
       function drawOnData (datasetEl, data) {
         datasetEl.innerText = JSON.stringify(data, null, 2)
       }
+
       function drawOnTable (tableEl, data) {
         tableEl.innerHTML = `<tr>
             <th>time</th>
@@ -136,12 +157,8 @@
           console.log('sample[0]', sample[0])
           const trEl = document.createElement('tr')
           trEl.innerHTML = `
-            <td>
-            ${new Date(sample[0]).toISOString()}
-            </td>
-            <td>
-            ${sample[1]}
-            </td>
+            <td>${new Date(sample[0]).toISOString()}</td>
+            <td>${sample[1]}</td>
           `
           tableEl.appendChild(trEl)
         })
@@ -152,19 +169,19 @@
           title: 'value',
           interpolateNulls: true,
           hAxis: {
-            title: 'Time'
+            title: 'x'
           },
           vAxis: {
-            title: 'Value',
+            title: 'y',
             direction: 'r'
           },
           height: 300,
           width: 1200,
-          legend: {position: 'none'}
+          legend: { position: 'none' }
         }
 
         var chart = new google.visualization.LineChart(chartEl)
-        let chartData = google.visualization.arrayToDataTable([['time', 'value']].concat(data.map(i => [new Date(i[0]), i[1]])), false)
+        let chartData = google.visualization.arrayToDataTable([['x', 'y']].concat(data.map(i => [new Date(i[0]), i[1]])), false)
         chart.draw(chartData, options)
       }
 
