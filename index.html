@@ -99,17 +99,22 @@
       document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
       google.charts.load('current', {packages: ['corechart', 'line', 'annotationchart']})
-      google.charts.setOnLoadCallback(draw => drawData(getSamples()))
+      google.charts.setOnLoadCallback(draw => drawData(getInitialData()))
 
       function onDataChanged (event) {
         try {
           json = JSON.parse(datasetEl.value)
           drawData(json)
           setJSONValid(true)
+          persistJSON(json)
         } catch (err) {
           console.error(err)
           setJSONValid(false)
         }
+      }
+
+      function persistJSON (json) {
+        window.localStorage.setItem('json', JSON.stringify(json))
       }
 
       function setJSONValid (valid) {
@@ -119,6 +124,16 @@
         } else {
           if (jsonValidEl && jsonValidEl.style) jsonValidEl.style.display = 'none'
           if (jsonInvalidEl && jsonInvalidEl.style) jsonInvalidEl.style.display = 'inline-block'
+        }
+      }
+
+      function getInitialData () {
+        const jsonString = window.localStorage.getItem('json')
+        if (!jsonString) return getSamples()
+        try {
+          return JSON.parse(jsonString)
+        } catch (err) {
+          return getSamples()
         }
       }
 
