@@ -194,14 +194,13 @@
             title: 'y',
             direction: 'r'
           },
-          height: 300,
-          width: 1200,
           legend: { position: 'none' }
         }
 
+        const dataForChart = [['x', 'y']].concat(data.map(i => [new Date(i[0]), i[1]]))
         var chart = new google.visualization.LineChart(chartEl)
-        let chartData = google.visualization.arrayToDataTable([['x', 'y']].concat(data.map(i => [new Date(i[0]), i[1]])), false)
-        chart.draw(chartData, options)
+        let dataTable = google.visualization.arrayToDataTable(dataForChart, false)
+        chart.draw(dataTable, options)
       }
 
       function handleFileSelect(evt) {
