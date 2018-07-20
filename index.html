@@ -129,6 +129,10 @@
         isSharedEl.style.display = 'none'
       }
 
+      if (!window.localStorage.getItem('json')) {
+        window.localStorage.setItem('json', JSON.stringify(getSamples()))
+      }
+
       document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
       google.charts.load('current', {packages: ['corechart', 'line', 'annotationchart']})
