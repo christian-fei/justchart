@@ -30,8 +30,31 @@
   </head>
   <body>
     <div class="container section">
-      <h1 class="title is-1">Just chart!</h1>
-      <p id="selected-file">Below you can see an example computed with a random sample of data, with time (x) and value (y).</p>
+      <div class="is-pulled-right">
+        <button onclick="share()" class="is-pulled-right button is-success">Share!</button>
+        <p class="">Click here to generate a shareable URL</p>
+      </div>
+      <h1 class="title is-1">
+        <a href="/">Just chart!</a>
+      </h1>
+
+      <div class="container">
+        <div class="card">
+          <div class="card-body">
+            <div class="section">
+              <p id="selected-file">
+                <b>
+                  Below you can see an example computed with a random sample of data, with time (x) and value (y).
+                </b>
+              </p>
+              <br>
+              <span id="is-shared" class="tag is-success">
+                This is a shared chart
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="container">
         <!-- <p>Or drop your JSON here!</p> -->
@@ -94,8 +117,18 @@
       const datasetEl = document.getElementById('dataset-raw')
       const chartEl = document.getElementById('dataset-chart')
       const selectedFileEl = document.getElementById('selected-file')
+      const isSharedEl = document.getElementById('is-shared')
       const jsonValidEl = document.getElementById('json-valid')
       const jsonInvalidEl = document.getElementById('json-invalid')
+
+      const urlData = location.search.slice(1).split('&').map(p => p.split('=')).reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {}).data
+
+      if (urlData) {
+        isSharedEl.style.display = 'inline-block'
+      } else {
+        isSharedEl.style.display = 'none'
+      }
+
       document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
       google.charts.load('current', {packages: ['corechart', 'line', 'annotationchart']})
@@ -110,6 +143,16 @@
         } catch (err) {
           console.error(err)
           setJSONValid(false)
+        }
+      }
+
+      function share () {
+        const jsonString = window.localStorage.getItem('json')
+        if (jsonString) {
+          const encoded = btoa(jsonString)
+          window.location.search = `data=${encoded}`
+        } else {
+          alert('there was a problem sharing the chart')
         }
       }
 
@@ -128,6 +171,16 @@
       }
 
       function getInitialData () {
+        if (window.location.search) {
+          if (urlData) {
+            try {
+              const json = atob(urlData)
+              return JSON.parse(json)
+            } catch (err) {
+              alert('error parsing query string')
+            }
+          }
+        }
         const jsonString = window.localStorage.getItem('json')
         if (!jsonString) return getSamples()
         try {
