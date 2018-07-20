@@ -31,10 +31,10 @@
   <body>
     <div class="container section">
       <div class="is-pulled-right">
-        <button onclick="share()" class="is-pulled-right button is-success">Share!</button>
+        <button onclick="share()" class="is-pulled-right button is-success share">Share!</button>
         <p class="">Click here to generate a shareable URL</p>
       </div>
-      <h1 class="title is-1">
+      <h1 class="main-title title is-1">
         <a href="/">Just chart!</a>
       </h1>
 
@@ -121,17 +121,11 @@
       const jsonValidEl = document.getElementById('json-valid')
       const jsonInvalidEl = document.getElementById('json-invalid')
 
-      const urlData = location.search.slice(1).split('&').map(p => p.split('=')).reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {}).data
+      const urlData = location.search.slice(1).split('&').map(p => p.split('=')).reduce((obj, [key, value]) => Object.assign(obj, { [key]: value }), {}).data
 
-      if (urlData) {
-        isSharedEl.style.display = 'inline-block'
-      } else {
-        isSharedEl.style.display = 'none'
-      }
+      if (urlData) { isSharedEl.style.display = 'inline-block' } else { isSharedEl.style.display = 'none' }
 
-      if (!window.localStorage.getItem('json')) {
-        window.localStorage.setItem('json', JSON.stringify(getSamples()))
-      }
+      if (!window.localStorage.getItem('json')) { window.localStorage.setItem('json', JSON.stringify(getSamples())) }
 
       document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
@@ -141,28 +135,22 @@
       function onDataChanged (event) {
         try {
           json = JSON.parse(datasetEl.value)
-          drawData(json)
-          setJSONValid(true)
-          persistJSON(json)
+          drawData(json), setJSONValid(true), persistJSON(json)
         } catch (err) {
-          console.error(err)
-          setJSONValid(false)
+          console.error(err), setJSONValid(false)
         }
       }
 
       function share () {
         const jsonString = window.localStorage.getItem('json')
         if (jsonString) {
-          const encoded = btoa(jsonString)
-          window.location.search = `data=${encoded}`
+          window.location.search = `data=${btoa(jsonString)}`
         } else {
           alert('there was a problem sharing the chart')
         }
       }
 
-      function persistJSON (json) {
-        window.localStorage.setItem('json', JSON.stringify(json))
-      }
+      function persistJSON (json) { window.localStorage.setItem('json', JSON.stringify(json)) }
 
       function setJSONValid (valid) {
         if (valid) {
@@ -175,23 +163,13 @@
       }
 
       function getInitialData () {
-        if (window.location.search) {
-          if (urlData) {
-            try {
-              const json = atob(urlData)
-              return JSON.parse(json)
-            } catch (err) {
-              alert('error parsing query string')
-            }
-          }
+        if (window.location.search && urlData) {
+          try { return JSON.parse(atob(urlData)) } catch (err) { alert('error parsing query string') }
         }
+
         const jsonString = window.localStorage.getItem('json')
         if (!jsonString) return getSamples()
-        try {
-          return JSON.parse(jsonString)
-        } catch (err) {
-          return getSamples()
-        }
+        try { return JSON.parse(jsonString) } catch (err) { return getSamples() }
       }
 
       function getSamples () {
@@ -244,13 +222,8 @@
         const options = {
           title: 'value',
           interpolateNulls: true,
-          hAxis: {
-            title: 'x'
-          },
-          vAxis: {
-            title: 'y',
-            direction: 'r'
-          },
+          hAxis: { title: 'x' },
+          vAxis: { title: 'y', direction: 'r' },
           legend: { position: 'none' }
         }
 
@@ -264,10 +237,9 @@
         var files = evt.target.files
         if (files.length < 1) throw new Error('please provide file')
         const file = files[0]
+
         var reader = new FileReader()
-
         reader.onload = handleFileRead
-
         reader.readAsText(file)
       }
 
