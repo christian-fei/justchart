@@ -6,11 +6,7 @@ addons:
   chrome: stable
 cache:
   directories:
-    - $HOME/cypress/screenshots
-    - $HOME/cypress/videos
-before_cache:
-  - rm -f $HOME/cypress/screenshots/*
-  - rm -f $HOME/cypress/videos/*
+    - $HOME/cypress
 before_script:
   - npm start &
 script:
