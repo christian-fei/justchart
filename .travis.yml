@@ -2,6 +2,9 @@
 language: node_js
 node_js:
   - "9"
-script:
+addons:
+  chrome: stable
+before_script:
 - npm start
+script:
 - npm t
