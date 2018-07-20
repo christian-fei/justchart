@@ -4,6 +4,13 @@ node_js:
   - "9"
 addons:
   chrome: stable
+cache:
+  directories:
+    - $HOME/cypress/screenshots
+    - $HOME/cypress/videos
+before_cache:
+  - rm -f $HOME/cypress/screenshots/*
+  - rm -f $HOME/cypress/videos/*
 before_script:
   - npm start &
 script:
