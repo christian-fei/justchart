@@ -25,7 +25,7 @@
   "dependencies": {
     "ecstatic": "^3.2.1"
   },
-  "devDependencies": {
+  "optionalDependencies": {
     "cypress": "^3.0.2"
   }
 }
