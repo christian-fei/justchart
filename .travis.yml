@@ -7,4 +7,4 @@ addons:
 before_script:
   - npm start &
 script:
-  - npm t
+  - npm t -- run
