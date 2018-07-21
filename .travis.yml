@@ -18,10 +18,10 @@ script:
   - npm i cypress --no-save
   - npm t -- run
 
-before_deploy: npm install now --no-save
+before_deploy: npm install now --no-save && now ls justchart --token $NOW_TOKEN --all | grep justchart | awk '{print $2}' | xargs now rm  --token $NOW_TOKEN -y
 deploy:
   - provider: script
-    script: now ls justchart --token $NOW_TOKEN --all | grep justchart | awk '{print $2}' | xargs now rm  --token $NOW_TOKEN -y && now --public --token $NOW_TOKEN && now alias --token $NOW_TOKEN
+    script: now --public --token $NOW_TOKEN && now alias --token $NOW_TOKEN
 
     skip_cleanup: true
     on:
