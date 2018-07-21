@@ -196,42 +196,48 @@
       function drawData (data) {
         if (!Array.isArray(data)) return alert('<data> must be an array')
 
-        drawOnChart(chartEl, data)
-        drawOnTable(tableEl, data)
-        drawOnData(datasetEl, data)
+        let mode = Number.isFinite(data[0][0]) ? 'number' : 'date'
+        // console.log('-- data[0][0], mode', data[0][0], mode)
+        // console.log('new Date(data[0][0])', new Date(data[0][0]), data[0][0])
+
+        drawOnChart(chartEl, data, mode)
+        drawOnTable(tableEl, data, mode)
+        drawOnData(datasetEl, data, mode)
       }
 
-      function drawOnData (datasetEl, data) {
+      function drawOnData (datasetEl, data, mode) {
         datasetEl.innerText = JSON.stringify(data, null, 2)
       }
 
-      function drawOnTable (tableEl, data) {
+      function drawOnTable (tableEl, data, mode) {
         tableEl.innerHTML = `<tr>
-            <th>time</th>
-            <th>value</th>
+            <th>x</th>
+            <th>y</th>
           </tr>`
         data.forEach(sample => {
           if (!sample[0]) return
-          console.log('sample[0]', sample[0])
+          // console.log('sample[0]', sample[0])
           const trEl = document.createElement('tr')
           trEl.innerHTML = `
-            <td>${new Date(sample[0]).toISOString()}</td>
+            <td>${(mode === 'date') ? new Date(sample[0]).toISOString() : parseFloat(sample[0])}</td>
             <td>${sample[1]}</td>
           `
           tableEl.appendChild(trEl)
         })
       }
 
-      function drawOnChart (chartEl, data) {
+      function drawOnChart (chartEl, data, mode) {
+        if (!data || !data[0] || !data[0][0]) return
         const options = {
-          title: 'value',
+          title: '',
           interpolateNulls: true,
           hAxis: { title: 'x' },
           vAxis: { title: 'y', direction: 'r' },
           legend: { position: 'none' }
         }
 
-        const dataForChart = [['x', 'y']].concat(data.map(i => [new Date(i[0]), i[1]]))
+
+        const dataForChart = [['x', 'y']].concat(data.map(i => [(mode === 'date') ? new Date(i[0]) : parseFloat(i[0]), i[1]]))
         var chart = new google.visualization.LineChart(chartEl)
         let dataTable = google.visualization.arrayToDataTable(dataForChart, false)
         chart.draw(dataTable, options)
