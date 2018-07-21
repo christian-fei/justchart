@@ -78,6 +78,7 @@
       <div class="columns">
         <div class="column">
           <h2 class="title is-4">Raw</h2>
+          <button class="button" id="randomize">Sample</button>
           <i>You can edit the raw JSON!</i>
           <br>
           <br>
@@ -136,6 +137,9 @@
       const isSharedEl = document.getElementById('is-shared')
       const jsonValidEl = document.getElementById('json-valid')
       const jsonInvalidEl = document.getElementById('json-invalid')
+      const randomizeEl = document.getElementById('randomize')
+
+      randomizeEl.addEventListener('click', randomize)
 
       const urlData = location.search.slice(1).split('&').map(p => p.split('=')).reduce((obj, [key, value]) => Object.assign(obj, { [key]: value }), {}).data
 
@@ -188,7 +192,14 @@
         try { return JSON.parse(jsonString) } catch (err) { return getSamples() }
       }
 
+      function randomize () {
+        console.log('randomize')
+        const json = getSamples()
+        drawData(json), setJSONValid(true), persistJSON(json)
+      }
+
       function getSamples () {
+        console.log('getSamples')
         const data = []
 
         const HOURS = 1000 * 60 * 60
