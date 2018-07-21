@@ -8,12 +8,14 @@ addons:
 cache:
   directories:
     - $HOME/cypress
-    - "node_modules"
+    - $HOME/.cache
 
 before_script:
+  - npm install -g wait-on
   - npm start &
+  - wait-on http://localhost:8000
 script:
-  - npm i cypress
+  - npm i cypress --no-save
   - npm t -- run
 
 before_deploy: npm install now --no-save
