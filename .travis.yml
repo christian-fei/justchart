@@ -21,7 +21,7 @@ script:
 before_deploy: npm install now --no-save
 deploy:
   - provider: script
-    script: now --public --token $NOW_TOKEN && now alias --token $NOW_TOKEN
+    script: now ls justchart --token $NOW_TOKEN --all | grep justchart | awk '{print $2}' | xargs now rm  --token $NOW_TOKEN -y && now --public --token $NOW_TOKEN && now alias --token $NOW_TOKEN
 
     skip_cleanup: true
     on:
