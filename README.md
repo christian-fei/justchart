@@ -3,5 +3,5 @@
 # test
 
 ```
-npm i cypress 
+npm i cypress --no-save
 ```
