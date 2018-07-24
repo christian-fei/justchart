@@ -18,11 +18,7 @@ script:
   - npm i cypress --no-save
   - npm t -- run
 
-before_deploy: 
-  - npm install now --no-save
-  - echo "-> justchart instances"
-  - now ls justchart --token $NOW_TOKEN --all | grep justchart | awk '{print $2}'
-  - now ls justchart --token $NOW_TOKEN --all | grep justchart | awk '{print $2}' | xargs now rm  --token $NOW_TOKEN -y
+before_deploy: npm install now --no-save
 deploy:
   - provider: script
     script: now --public --token $NOW_TOKEN && now alias --token $NOW_TOKEN
