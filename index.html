@@ -17,6 +17,11 @@
         -webkit-backface-visibility: hidden;
       }
 
+      textarea {
+        border-width: 3px;
+        outline: none;
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -78,24 +83,26 @@
       <div class="columns">
         <div class="column">
           <h2 class="title is-4">Raw</h2>
-          <button class="button" id="randomize">Sample</button>
-          <i>You can edit the raw JSON!</i>
-          <br>
-          <br>
+          <div class="columns">
+            <div class="column">
+              <i>You can edit the raw JSON!</i>
+            </div>
+            <div class="column">
+              <button class="button pull-right" id="randomize">Generate sample data</button>
+            </div>
+          </div>
           <div class="content">
-            <span class="tag is-success" id="json-valid">valid</span>
-            <span class="tag is-danger" id="json-invalid" style="display: none">invalid</span>
-            <textarea style="height: 300px" class="textarea" columns="200" rows="30" editable onkeyup="onDataChanged(event)" id="dataset-raw"></textarea>
+            <textarea style="height: 20rem" class="textarea" columns="200" rows="30" editable onkeyup="onDataChanged(event)" id="dataset-raw"></textarea>
           </div>
         </div>
         <div class="column">
           <h2 class="title is-4">Formatted</h2>
           <br>
           <br>
-          <br>
-          <div id="dataset" style="height: 300px; overflow: scroll" class="card">
-            <table id="dataset-table" class="table has-text-centered">
-            </table>
+          <div id="dataset" style="height: 20rem; overflow: scroll">
+            <div class="card">
+              <table id="dataset-table" class="table has-text-centered"></table>
+            </div>
           </div>
         </div>
       </div>
@@ -176,9 +183,11 @@
         if (valid) {
           if (jsonValidEl && jsonValidEl.style) jsonValidEl.style.display = 'inline-block'
           if (jsonInvalidEl && jsonInvalidEl.style) jsonInvalidEl.style.display = 'none'
+          if (datasetEl && datasetEl.style) datasetEl.style.borderColor = '#23d160'
         } else {
           if (jsonValidEl && jsonValidEl.style) jsonValidEl.style.display = 'none'
           if (jsonInvalidEl && jsonInvalidEl.style) jsonInvalidEl.style.display = 'inline-block'
+          if (datasetEl && datasetEl.style) datasetEl.style.borderColor = '#ff3860'
         }
       }
 
