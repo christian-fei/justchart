@@ -23,6 +23,9 @@
     "alias": "justchart"
   },
   "dependencies": {
-    "ecstatic": "^3.2.1"
+    "ecstatic": "^4.1.2"
+  },
+  "optionalDependencies": {
+    "cypress": "^3.2.0"
   }
 }
