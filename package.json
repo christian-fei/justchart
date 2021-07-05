@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy": "now; now alias",
     "start": "ecstatic",
     "test": "cypress"
   },
